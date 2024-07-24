@@ -1,0 +1,11 @@
+[
+  {
+    "_id": "6343dc262a2374f885d4e023",
+    "username": "dss-integration",
+    "email": "integration@linksfoundation.com",
+    "name": "dss-integration",
+    "surname": "ex",
+    "hashed_password": "$2b$12$sirbD1h8eAqAK.kLz4ScZekeRWHunydOnvE29ugQSyI9.K6WOBQTu",
+    "scopes": ["simulator"]
+  }
+]

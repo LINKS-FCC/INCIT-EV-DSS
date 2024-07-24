@@ -1,0 +1,15 @@
+version: "3.3"
+
+networks:
+  integration:
+    driver: bridge
+
+services:
+  integration:
+    container_name: ${IMAGE_NAME}
+    image: ${REGISTRY_URL}/${IMAGE_NAME}:${IMAGE_TAG}
+    build: .
+    ports:
+      - 8000:80
+    networks:
+      - integration

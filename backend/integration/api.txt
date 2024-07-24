@@ -1,0 +1,50 @@
+POST -> Analisi -> Progetto -> Utente (pending)
+<richiesta parametri>
+GET \project_id\analysis_id\status
+GET -> Avvia -> Analisi (calculation)
+<avviare l'analisi>
+GET -> Calculation in progress...
+<quando termina> (status: ended)
+GET -> Analisi -> Risultati
+
+{
+    "name": "Torino",
+    "id": "abcdef",
+    "user": {
+        "username": "admin",
+        ...
+    },
+    "status": "ready/missing*/removed**"
+    "shapefile": "torino_5T.zip"
+    "config": {
+        "ubm.yml": {"total_urban_trips": 89243, "total_incoming_trips": 50515, ...}, 
+        "p.yaml": {},
+        "ci.yml": {}
+    },
+    "analyses": [
+        {
+            "name": "2030",
+            "id": "ab222",
+            "status": "pending/progress/ended",
+            "config***":  {
+                "ubm.yml": {"total_urban_trips": 100000, "total_incoming_trips": 50515, ...}
+            }
+            "results": {}
+        }
+    ]
+}
+
+*: mancano dei dati, si può avviare l'analisi solamente quando tutti gli input sono stati definiti
+    dall'utente
+**: o in stato di rimozione tra tot giorni, oppure potrebbe non essere necessario
+***: elenco di file contenenti ALMENO UN parametro modificato dall'utente. In questo caso, il file
+    di configurazione viene riportato tale e quale all'originale al netto delle modifiche
+
+FRONTEND --- <questo protocollo> ---> BACKEND (1)
+
+BACKEND:  - interfaccia <riceve REST API> (1)
+          |
+          - DSS <simulazione>             (2)
+
+BACKEND:  docker container
+          INTERFACCIA RESTful <-> DSS

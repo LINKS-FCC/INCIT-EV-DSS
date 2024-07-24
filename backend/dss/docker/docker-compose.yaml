@@ -1,0 +1,65 @@
+# Use root/example as user/password credentials
+version: "3.1"
+
+services:
+  mongo:
+    image: mongo
+    restart: always
+    container_name: mongodb
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: testing_db
+    volumes:
+      - /srv/incit-ev/dss/mongo/data:/data/db
+
+  mongo-seed-defaults:
+    build: ./mongo-seed/seed-defaults
+    depends_on:
+      - mongo
+
+  mongo-seed-users:
+    build: ./mongo-seed/seed-users
+    depends_on:
+      - mongo
+
+  mongo-express:
+    image: mongo-express
+    restart: always
+    ports:
+      - 28000:8081
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: testing_db
+      ME_CONFIG_MONGODB_SERVER: mongodb
+
+  dss:
+    build: ../ #dss-api:3.0.0   image name for testing API
+    container_name: dss
+    ports:
+      - 5000:80
+    environment:
+      MONGO_URI: mongodb
+      MONGO_USER: root
+      MONGO_PASSWORD: testing_db
+      SIMULATOR_URI: http://dss-integration:80/api/v1/simulations/
+      DATABASE_NAME: incitev
+      DSS_PRIVATE_KEY: /app/dss-api.key
+      DSS_PUBLIC_KEY: /app/dss-api.key.pub
+    volumes:
+      - ./dss-api.key:/app/dss-api.key:ro
+      - ./dss-api.key.pub:/app/dss-api.key.pub:ro
+
+  dss-integration:
+    build: ../../integration
+    container_name: dss-integration
+    ports:
+      - 9000:80
+    environment:
+      DSS_URI: dss
+      DSS_USER: dss-integration
+      DSS_PASSWORD: Simulator!2022!
+      DSS_PUBLIC_KEY: /app/dss-api.key.pub
+    volumes:
+      - ./dss-api.key.pub:/app/dss-api.key.pub:ro

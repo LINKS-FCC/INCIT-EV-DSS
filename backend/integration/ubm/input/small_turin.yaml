@@ -1,0 +1,12 @@
+---
+zoning_shp_path: circoscrizioni_geo.zip
+total_urban_trips:
+  - 1000
+total_incoming_trips:
+  - 1000
+total_outgoing_trips:
+  - 1000
+average_number_trips:
+  - 1
+bevs_ratio: 0.1
+phevs_ratio: 0

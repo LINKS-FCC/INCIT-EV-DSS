@@ -1,0 +1,12 @@
+[submodule "app/modules/mobility"]
+	path = app/modules/mobility
+	url = http://zenit.polito.it/incit-ev/mobility.git
+[submodule "app/modules/ub"]
+	path = app/modules/ub
+	url = http://zenit.polito.it/incit-ev/ub.git
+[submodule "app/modules/power"]
+	path = app/modules/power
+	url = http://zenit.polito.it/incit-ev/power.git
+[submodule "app/modules/ci"]
+	path = app/modules/ci
+	url = http://zenit.polito.it/incit-ev/ci.git

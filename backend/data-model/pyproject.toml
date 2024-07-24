@@ -1,0 +1,33 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "dssdm"
+version = "5.7.0"
+authors = [
+    { name="Nicolò Bertozzi", email="nicolo.bertozzi@linksfoundation.com" },
+    { name="Alessandro Mozzato", email="alessandro.mozzato@linksfoundation.com" },
+    { name="Lorenzo Larghi", email="lorenzo.larghi@linksfoundation.com" },
+    { name="Lucio Rocco Inglese", email="lucio.inglese@linksfoundation.com" },
+
+]
+description = "Input/outputs data models for the DSS backend architecture."
+readme = "README.md"
+requires-python = ">=3.7"
+classifiers = [
+   "Programming Language :: Python :: 3",
+   "Operating System :: OS Independent",
+]
+dependencies = [
+    "bson",
+    "pydantic",
+    "pymongo",
+    "python-dateutil",
+    "setuptools==57.5.0",
+    "six",
+    "typing_extensions"
+]
+
+[tool.setuptools.packages]
+find = {}

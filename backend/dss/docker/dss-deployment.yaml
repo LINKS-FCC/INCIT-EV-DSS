@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dss-api
+  labels:
+    app: dss-api
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: dss-api
+  template:
+    metadata:
+      labels:
+        app: dss-api
+    spec:
+      containers:
+      - name: dss-api
+        image: maestri.ismb.it:5050/dss-api:latest
+        ports:
+        - containerPort: 80
+      imagePullSecrets:
+      - name: registrysecret
+      env:
+      - name: DSS_PRIVATE_KEY
+        valueFrom:
+          secretKeyRef:
+            name: dss-key
+            key: private.pem
+      - name: DSS_PUBLIC_KEY
+        valueFrom:
+          secretKeyRef:
+            name: dss-key
+            key: public.pem
+      - name: MONGO_URI
+        value: mongodb-service
+      - name: SIMULATOR_URI
+        value: dss-integration-svc
+      - name: DATABASE_NAME
+        value: incitev
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dss-api-svc
+spec:
+  selector:
+    app: dss-api
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80

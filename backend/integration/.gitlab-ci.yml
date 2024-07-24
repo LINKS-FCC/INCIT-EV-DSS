@@ -1,0 +1,99 @@
+variables:
+  IMAGE_NAME: "integration"
+  IMAGE_TAG: "1.0.0"
+  DEPLOY_FILE: "dss-integration.yaml"
+  
+stages:
+  - build
+  - deploy
+
+.build_image:
+  stage: build
+  image: docker:20.10.16
+  services:
+    - name: docker:20.10.16-dind
+  variables:
+      #DOCKER_HOST: tcp://docker:2376/
+      #DOCKER_DRIVER: overlay2
+      DOCKER_TLS_CERTDIR: "/certs"
+  before_script:
+      - apk update
+      - apk add --no-cache bash python3 openssh-client-common docker-compose
+      - mkdir -p $HOME/.docker
+      - echo $DOCKER_AUTH_CONFIG > $HOME/.docker/config.json
+      - touch .env.ci
+      - echo "REGISTRY_URL=$REGISTRY_URL" >> .env.ci
+      - echo "IMAGE_NAME=$IMAGE_NAME" >> .env.ci
+      - echo "IMAGE_TAG=$IMAGE_TAG" >> .env.ci
+  script:
+      - docker compose --env-file .env.ci build
+      - docker push ${REGISTRY_URL}/${IMAGE_NAME}:${IMAGE_TAG}
+      - docker tag ${REGISTRY_URL}/${IMAGE_NAME}:${IMAGE_TAG} ${REGISTRY_URL}/${IMAGE_NAME}:latest
+      - docker push ${REGISTRY_URL}/${IMAGE_NAME}:latest
+
+deploy_pod_helm:
+  stage: deploy
+  image: docker:20.10.18
+  before_script:
+    - apk update
+    - 'which ssh-agent || ( apk add openssh-client )'
+    - eval $(ssh-agent -s)
+    - echo "$SSH_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - ssh-keyscan $SERVER_IP >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+    - touch install.sh
+    - echo 'if [ $(kubectl get po -o name | grep incitev | wc -l) -gt 0 ]; then helm uninstall incitev; fi' >> install.sh
+    - echo 'while [ $(kubectl get po -o name | grep incitev | wc -l) -gt 0 ]; do echo "waiting..." & sleep 1; done;' >> install.sh
+    - echo 'helm install incitev maestri/incitev' >> install.sh
+    - scp -q ./install.sh $SERVER_USER@$SERVER_IP:/home/$SERVER_USER/
+  script:
+    - ssh $SERVER_USER@$SERVER_IP "chmod 777 install.sh"
+    - ssh $SERVER_USER@$SERVER_IP "./install.sh"
+
+.deploy_pod_k8:
+  stage: deploy
+  image: docker:20.10.18
+  before_script:
+    - apk update
+    - 'which ssh-agent || ( apk add openssh-client )'
+    - eval $(ssh-agent -s)
+    - echo "$SSH_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - ssh-keyscan $SERVER_IP >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+  script:
+    - ssh $SERVER_USER@$SERVER_IP "kubectl delete -f ./dss/$DEPLOY_FILE"
+    - scp -q ./$DEPLOY_FILE $SERVER_USER@$SERVER_IP:/home/$SERVER_USER/dss/
+    - ssh $SERVER_USER@$SERVER_IP "kubectl create -f ./dss/$DEPLOY_FILE"
+
+.deploy_container:
+  stage: deploy
+  image: docker:20.10.18
+  before_script:
+      - apk add openssh
+      - echo "$SSH_KEY" >> ./ssh-key
+      - chmod 400 $SSH
+      - echo "REGISTRY_URL=$REGISTRY_URL" >> .env.ci
+      - echo "IMAGE_NAME=$IMAGE_NAME" >> .env.ci
+      - echo "IMAGE_TAG=$IMAGE_TAG" >> .env.ci
+      - scp -o StrictHostKeyChecking=no -i .ssh-key -q ./.env.ci $SERVER_USER@$SERVER_IP:/home/$SERVER_USER/
+      - scp -o StrictHostKeyChecking=no -i ./ssh-key -q ./docker-compose.yml $SERVER_USER@$SERVER_IP:/home/$SERVER_USER/
+  script:
+      - ssh -o StrictHostKeyChecking=no -i ./ssh-key $SERVER_USER@$SERVER_IP "docker login -u $REGISTRY_USER -p $REGISTRY_PASS $REGISTRY_URL"
+      #- ssh -o StrictHostKeyChecking=no -i $SSH_KEY $SERVER_USER@$SERVER_IP "docker ps | grep $IMAGE_NAME -c" >> dockerpscount
+      #- if [ $(cat dockerpscount) -gt 0]; then ssh -o StrictHostKeyChecking=no -i $SSH_KEY $SERVER_USER@$SERVER_IP -v "
+      #- ssh -o StrictHostKeyChecking=no -i $SSH_KEY $SERVER_USER@$SERVER_IP -v "if [ $(cat dockerpscount) -gt 0 ]; then docker ps | grep $IMAGE_NAME | awk '{ print $1 }' | xargs docker stop | xargs docker rm; fi"
+      #- if [ $(cat dockerpscount) -gt 0 ]
+      #- ssh -o StrictHostKeyChecking=no -i $SSH_KEY $SERVER_USER@$SERVER_IP "docker image ls -a | grep $IMAGE_NAME -c >> dockerimgcount"
+      #- ssh -o StrictHostKeyChecking=no -i $SSH_KEY $SERVER_USER@$SERVER_IP -v "if [ $(cat dockerimgcount) -gt 0 ]; then docker image ls -a | grep $IMAGE_NAME | awk '{ print $3 }' | xargs docker image rm; fi"
+      - ssh -o StrictHostKeyChecking=no -i ./ssh-key $SERVER_USER@$SERVER_IP "docker ps -aq --filter name=$IMAGE_NAME | xargs -r docker stop" 
+      - ssh -o StrictHostKeyChecking=no -i ./ssh-key $SERVER_USER@$SERVER_IP "docker container ls -aq --filter name=$IMAGE_NAME | xargs -r docker container rm"
+      - ssh -o StrictHostKeyChecking=no -i ./ssh-key $SERVER_USER@$SERVER_IP "docker image ls -aq --filter reference=$REGISTRY_URL/$IMAGE_NAME | xargs -r docker image rm" 
+      - ssh -o StrictHostKeyChecking=no -i ./ssh-key $SERVER_USER@$SERVER_IP "docker compose --env-file .env.ci up --no-build -d"
+  after_script:
+      - ssh -o StrictHostKeyChecking=no -i ./ssh-key $SERVER_USER@$SERVER_IP "rm docker-compose.yml"
+      - ssh -o StrictHostKeyChecking=no -i ./ssh-key $SERVER_USER@$SERVER_IP "rm .env.ci"
+      - ssh -o StrictHostKeyChecking=no -i ./ssh-key $SERVER_USER@$SERVER_IP "docker logout $REGISTRY_URL"

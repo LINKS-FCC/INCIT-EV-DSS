@@ -1,0 +1,39 @@
+[tool.poetry]
+name = "ubm"
+version = "0.9.0"
+description = ""
+authors = ["Piero Macaluso <piero.macaluso@linksfoundation.com>",
+    "Paolo Lazzeroni <paolo.lazzeroni@linksfoundation.com>",
+    "Cristiana Botta <cristiana.botta@linksfoundation.com>",
+    "Alessandro Mozzato <alessandro.mozzato@linksfoundation.com>",
+    "Lucio Rocco Inglese <lucio.inglese@linksfoundation.com>"]
+
+[tool.poetry.dependencies]
+python = ">=3.9,<3.10"
+pydantic = "^1.8.1"
+geopandas = "^0.9.0"
+Shapely = "^1.7.1"
+pandas = "^1.2.4"
+requests = "^2.25.1"
+numpy = "^1.20.2"
+pyshp = "^2.1.3"
+rasterio = "^1.2.2"
+pyproj = "^3.0.1"
+PyCRS = "^1.0.2"
+coverage = "^5.5"
+rasterstats = "^0.15.0"
+scipy = "^1.6.3"
+PyYAML = "^5.4.1"
+matplotlib = "^3.4.2"
+gdal = "3.2.2"
+clint = "^0.5.1"
+
+[tool.poetry.dev-dependencies]
+ipywidgets = "^7.6.3"
+jupyter = "^1.0.0"
+streamlit = "^1.7.0"
+python-slugify = "^6.1.1"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

@@ -1,0 +1,48 @@
+1: 1  # 111 - Continuous urban fabric
+2: 1  # 112 - Discontinuous urban fabric
+3: 0.1  # 121 - Industrial or commercial units
+4: 0  # 122 - Road and rail networks and associated land
+5: 0.1  # 123 - Port areas
+6: 0.1  # 124 - Airports
+7: 0  # 131 - Mineral extraction sites
+8: 0  # 132 - Dump sites
+9: 0.01  # 133 - Construction sites
+10: 0.01  # 141 - Green urban areas
+11: 0.01  # 142 - Sport and leisure facilities
+12: 0.01  # 211 - Non-irrigated arable land
+13: 0.01  # 212 - Permanently irrigated land
+14: 0.01  # 213 - Rice fields
+15: 0.01  # 221 - Vineyards
+16: 0.01  # 222 - Fruit trees and berry plantations
+17: 0.01  # 223 - Olive groves
+18: 0.01  # 231 - Pastures
+19: 0.01  # 241 - Annual crops associated with permanent crops
+20: 0.01  # 242 - Complex cultivation patterns
+21: 0.01  # 243 - Land principally occupied by agriculture with significant areas of natural vegetation
+22: 0.01  # 244 - Agro-forestry areas
+23: 0  # 311 - Broad-leaved forest
+24: 0  # 312 - Coniferous forest
+25: 0  # 313 - Mixed forest
+26: 0  # 321 - Natural grasslands
+27: 0  # 322 - Moors and heathland
+28: 0  # 323 - Sclerophyllous vegetation
+29: 0  # 324 - Transitional woodland-shrub
+30: 0  # 331 - Beaches - dunes - sands
+31: 0  # 332 - Bare rocks
+32: 0  # 333 - Sparsely vegetated areas
+33: 0  # 334 - Burnt areas
+34: 0  # 335 - Glaciers and perpetual snow
+35: 0  # 411 - Inland marshes
+36: 0  # 412 - Peat bogs
+37: 0  # 421 - Salt marshes
+38: 0  # 422 - Salines
+39: 0  # 423 - Intertidal flats
+40: 0  # 511 - Water courses
+41: 0  # 512 - Water bodies
+42: 0  # 521 - Coastal lagoons
+43: 0  # 522 - Estuaries
+44: 0  # 523 - Sea and ocean
+45: 0  # No Value
+46: 0  # No Value
+47: 0  # No Value
+48: 0  # 999 - NODATA

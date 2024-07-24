@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dss-integration
+  labels:
+    app: dss-integration
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: dss-integration
+  template:
+    metadata:
+      labels:
+        app: dss-integration
+    spec:
+      containers:
+      - name: integration
+        image: maestri.ismb.it:5050/integration:latest
+        ports:
+        - containerPort: 80
+        readinessProbe:
+          httpGet:
+            path: api/v1/health/
+            port: 80
+          initialDelaySeconds: 5
+          periodSeconds: 1
+        env:
+        - name: DSS_PUBLIC_KEY
+          value: /app/keys/dss-api.key.pub
+        - name: DSS_URI
+          value: dss-api-svc
+        - name: DSS_USER
+          valueFrom:
+            secretKeyRef:
+              name: dss-secret
+              key: dss-user
+        - name: DSS_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: dss-secret
+              key: dss-password
+        volumeMounts:
+        - name: keys
+          mountPath: /app/keys
+          readOnly: true 
+      imagePullSecrets:
+      - name: registrysecret
+      volumes:
+      - name: keys
+        secret:
+          secretName: dss-keys 
+          items:
+          - key: dss-api.key.pub
+            path: dss-api.key.pub
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: dss-integration-svc
+spec:
+  selector:
+    app: dss-integration
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80

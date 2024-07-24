@@ -1,0 +1,12 @@
+## GENERAL
+zoning_shp_path: input/torino_5T.zip
+total_urban_trips:
+  - 89243
+total_incoming_trips:
+  - 50515
+total_outgoing_trips:
+  - 28423
+average_number_trips:
+  - 1
+bevs_ratio: 0.05
+phevs_ratio: 0

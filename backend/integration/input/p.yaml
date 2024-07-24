@@ -1,0 +1,16 @@
+## GENERAL
+abs_path: 'datasets'
+Expected_EV: 1.00  # Ratio of EV (deprecated, leave at 1.0)
+ROIG: 100000  # ROI Goal [€] (general)
+CIY: 1  # 0-1 (false-true) to trigger the analysis of a new CI (general)
+AY: 2020  # Year to be examined to scale values (general)
+TDP: 'Weekdays'  # ['Weekdays', 'Weekends'] (general)
+
+## ZONE-SPECIFIC
+Zone_type: 'Commercial'  # ['Commercial', 'Residential', 'Industrial (?)'] (zone-specific)
+PP: 0  # 0-1 (false-true) Power Demand Profile activation specified by user (zone-specific)
+PPP: 'P_profile_UL.xlsx'  # Power Demand Profile (zone-specific)
+TRNP: 5000  # Transformer Nominal Power [kW] (zone-specific)
+ML: 83.5  # Maximal Loading [%] (zone-specific)
+SPP: 0  # Number of existing Solar Power Plants (zone-specific)
+SPPP: 100  # Solar Power Plants Nominal Power [kW] (zone-specific)

@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "integration"
+version = "0.1.0"
+description = ""
+authors = [
+    "Nicolò Bertozzi <nicolo.bertozzi@linksfoundation.com>",
+    "Piero Macaluso <piero.macaluso@linksfoundation.com>"]
+
+[tool.poetry.dependencies]
+python = ">=3.9,<3.10"
+power = { path = "power" }
+ci = { path = "ci" }
+gui = { path = "ci-and-p-gui"}
+ubm = { path = "ubm" }
+XlsxWriter = "^1.4.4"
+PyYAML = "^5.4.1"
+openpyxl = "^3.0.7"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

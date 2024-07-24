@@ -1,0 +1,142 @@
+{ 
+      "title": "Analysis Object Validation",
+      "bsonType": "object",
+      "required": [
+            "name",
+            "status",
+            "ubmY",
+            "powerY",
+            "ciY",
+            "outputsY",
+            "max_epoch",
+            "simulation_days",
+            "project",
+            "last_modify"
+      ],
+      "properties": 
+      {
+            "name": {
+                  "bsonType": "string",
+                  "description": "The name of the project"
+            },
+            "status": {
+                  "bsonType": "string",
+                  "description": "The status of the project",
+                  "enum": ["created", "running", "completed", "failed"]
+            },
+            "ubmY": {
+                  "bsonType": "object",
+                  "description": "The parameters required by the UB&M module"
+            },
+            "powerY": {
+                  "bsonType": "object",
+                  "description": "The parameters required by the PI module"
+            },
+            "ciY": {
+                  "bsonType": "object",
+                  "description": "The parameters required by the CI module"
+            },
+            "outputsY": {
+                  "bsonType": "object",
+                  "description": "The parameters that define the shape of the output"
+            },
+            "max_epoch": {
+                  "bsonType": "int",
+                  "description": "Number of epochs required by the simulation",
+                  "minimum": 5,
+                  "maximum": 1000
+            },
+            "simulation_days": {
+                  "bsonType": "int",
+                  "description": "Number of simulated days",
+                  "minimum": 1,
+                  "maximum": 1000
+            },
+            "project": {
+                  "bsonType": "objectId",
+                  "description": "Project to which the analysis is referred"
+            },
+            "results": {
+                  "bsonType": "object",
+                  "description": "Results of the simulation"  
+            },
+            "last_modify": {
+			"bsonType": "date",
+			"description": "The date of the last change"
+		}
+      }
+}
+
+{
+      "title": "Projects Validation Schema",
+	"bsonType": "object",
+	"required": [
+		"name",
+		"users",
+		"city",
+		"shapefile",
+            "last_modify"
+	],
+	"properties": {  
+		"name": {
+			"bsonType": "string",
+			"description": "The name of the project"
+		},
+            "users": {
+			"bsonType": "array",
+			"description": "The set of users that can access to the project",
+                  "items": {
+                        "bsonType": "objectId"
+                  }
+            }
+		"city": {
+			"bsonType": "string",
+			"description": "The city of the project"
+		},
+            "shapefile": {
+			"bsonType": "string",
+			"description": "The path of the shapefile associated to the project"
+		},
+            "last_modify": {
+			"bsonType": "date",
+			"description": "The date of the last change"
+		}
+      }
+}
+
+{
+	"title": "Users Validation Schema",
+	"bsonType": "object",
+	"required": [
+		"username",
+		"email",
+		"hashed_password",
+		"scopes"
+	],
+	"properties": {
+		"username": {
+			"bsonType": "string",
+			"description": "The username of the user"
+		},
+		"email": {
+			"bsonType": "string",
+			"description": "The email of the user"
+		},
+		"hashed_password": {
+			"bsonType": "string",
+			"description": "The password of the user, hashed in MD5"
+		},
+		"scopes": {
+			"bsonType": "array",
+                  "description": "The roles of the user."
+			"items": {
+				"bsonType": "string",
+				"enum": [
+					"user",
+					"admin",
+					"simulator"
+				]
+			}
+		}
+	}
+}
