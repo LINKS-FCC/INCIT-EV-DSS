@@ -4,6 +4,7 @@ from passlib.context import CryptContext
 from starlette import status
 from datetime import datetime, timezone
 from app.core.db import *
+import os
 
 from dssdm.mongo.mongodb_utils import OID
 from dssdm.mongo.input.analysis import AnalysesInDB, AnalysesFrontedUser, AnalysesUpdate, AnalysesNotYetInDB, AnalysesWithDefaults
@@ -24,6 +25,9 @@ from Crypto.Hash import SHA256
 from Crypto.Signature import PKCS1_v1_5
 from Crypto.PublicKey import RSA
 import json
+from dotenv import load_dotenv
+
+load_dotenv()
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -310,6 +314,12 @@ def run_simulation(analyses: AnalysesInDB, projects: ProjectInDB):
         "analysis_hash": analysis_signed,
         "shape_file_hash": shapefile_signed
     }
+    
+    for i in range(4):
+        path = requests.get(os.getenv("DSS_INTEGRATION_"+str(i))+"health/")
+        if path.status_code == 200:
+            settings.simulator_uri = str(os.getenv("DSS_INTEGRATION_"+str(i))+"simulations/")
+            break
     
     response = requests.post(url=settings.simulator_uri, headers=header, json=body)
     return response.json()["result"]

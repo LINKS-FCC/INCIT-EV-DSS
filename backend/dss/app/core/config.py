@@ -12,7 +12,7 @@ class Settings(BaseSettings):
     exp_min = 30
     mongo_uri = "mongodb://root:testing_db@localhost:27017/"
     db_name = "incitev"
-    simulator_uri = "http://dss-integration:80/api/v1/simulations/"
+    simulator_uri = "http://dss-integration-0:80/api/v1/simulations/"
 
 settings = Settings()
 

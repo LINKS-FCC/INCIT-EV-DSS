@@ -6,6 +6,7 @@ COPY Pipfile /app
 COPY Pipfile.lock /app
 COPY main.py /app
 COPY app /app/app
+COPY .env /app
 
 RUN apt-get update
 RUN apt-get install -y software-properties-common
