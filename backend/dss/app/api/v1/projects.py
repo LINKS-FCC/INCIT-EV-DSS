@@ -15,12 +15,12 @@ import json
 router = APIRouter()
 
 
-@router.get("/", response_model=List[ProjectInDB])
+@router.get("", response_model=List[ProjectInDB])
 async def list_all_user_projects(db: DB = Depends(), current_user: UserInDB = Depends(get_current_active_user)):
     return get_projects(db, current_user)
 
 
-@router.post("/", response_model=ProjectInDB) #not available. You should use the one under
+@router.post("", response_model=ProjectInDB) #not available. You should use the one under
 async def create_a_user_project(project_to_be_created: str = Form(...), shapefile: UploadFile = File(...), db: DB = Depends(),
                                 current_user: UserInDB = Depends(get_current_active_user)):
     return post_project(db, current_user, Project(**(json.loads(project_to_be_created))), shapefile)

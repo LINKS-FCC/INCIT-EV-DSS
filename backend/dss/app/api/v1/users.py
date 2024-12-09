@@ -8,11 +8,11 @@ from app.services.users import get_current_active_user, create_user, get_all_use
 router = APIRouter()
 
 
-@router.get("/")
+@router.get("")
 async def get_users(db: DB = Depends()):
     return get_all_users(db)
 
-@router.post("/", response_model=UserInfo)
+@router.post("", response_model=UserInfo)
 async def post_user(user: UserRegistration, db: DB = Depends()):
     return create_user(db, user)
 
