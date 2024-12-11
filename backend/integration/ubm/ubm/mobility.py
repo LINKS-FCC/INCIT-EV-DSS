@@ -90,8 +90,8 @@ def download_datasets(folder: str = "./datasets/"):
         Destination datasets folder
     """
     print("Download ENACT-POP datasets...")
-    token = "yqtkY_-PGDHtLYJuHTqF"
-    api = "https://zenit.linksfoundation.com/api/v4/projects/38/repository/files/"
+    token = "-LZyrVdYxDzQxfro-umu"
+    api = "https://gitlab.linksfoundation.com/api/v4/projects/150/repository/files/"
     night_raster_link = "ubm%2Fnight_0311_avg_t.tif/raw"
     day_raster_link = "ubm%2Fday_0311_avg_t.tif/raw"
     corine_raster_link = "ubm%2Fcorine.4326.tif/raw"

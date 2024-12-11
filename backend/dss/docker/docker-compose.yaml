@@ -35,8 +35,8 @@ services:
       ME_CONFIG_MONGODB_SERVER: mongodb
 
   dss:
-    build: ../
-    #image: ghcr.io/links-fcc/dss-api:2.8.0 
+    build: ../ #dss-api:3.0.0   image name for testing API
+    #image: ghcr.io/links-fcc/dss-api:2.8.0
     container_name: dss
     ports:
       - 5000:80

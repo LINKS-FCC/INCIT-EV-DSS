@@ -1,5 +1,6 @@
 from datetime import timedelta, datetime
-from typing import Optional
+from typing import List, Optional
+import os
 
 from fastapi import Depends, HTTPException, Security
 from fastapi.security import (
@@ -11,12 +12,14 @@ from pydantic import ValidationError
 from jose import jwt, JWTError
 from passlib.context import CryptContext
 from starlette import status
-
+from dssdm.mongo.input.project import ProjectInDB
 from app.core.db import *
 from dssdm.mongo.input.token import TokenData
 #from app.models.token import TokenData
 from dssdm.mongo.input.user import UserInDB, UserRegistration, UserInfo, PasswordChange, InfoUpdate, UserNotYetInDB
 #from app.models.user import UserInDB, UserRegistration, UserInfo, PasswordChange, InfoUpdate, UserNotYetInDB
+from dssdm.mongo.input.analysis import AnalysesInDB
+from app.services.projects import get_projects
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -171,6 +174,39 @@ def delete_user_admin(username: str, db: DB, current_user: UserInDB):
         raise HTTPException(status_code=status.HTTP_406_NOT_ACCEPTABLE,
                             detail="You can't delete your account")
     c.delete_one(user.mongo())
+
+def delete_user_account_service(db: DB, current_user: UserInDB):
+    c = db.instance["users"]
+    d = db.instance["projects"]
+    a = db.instance["analyses"]
+    
+    # Recupera l'utente
+    user = UserInDB.from_mongo(c.find_one({"_id": current_user.id}))
+    if user is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No user found")
+    
+    # Recupera i progetti associati all'utente
+    projects_list: List[ProjectInDB] = get_projects(db=db, user=user)
+    
+    for project in projects_list:
+        # Recupera le analisi associate al progetto
+        analysis_list = [AnalysesInDB.from_mongo(kv) for kv in a.find({"project_id": project.id}, {"results": 0})]
+        for analysis in analysis_list:
+            # Cancella ogni analisi
+            a.delete_one(analysis.mongo())
+        
+        # Cancella il progetto
+        d.delete_one(project.mongo())
+        
+        # Cancella i file associati al progetto
+        file_path = f"shapefile/{project.id}.zip"
+        if os.path.exists(file_path):
+            os.remove(file_path)
+    
+    # Cancella l'utente
+    c.delete_one(user.mongo())
+    
+    return True
 
 def get_all_users(db: DB):
     return list(map(lambda kv: UserInfo(**UserInDB.from_mongo(kv).dict()), list(db.instance['users'].find())))
